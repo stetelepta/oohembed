@@ -1,0 +1,445 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+   <title>Dumble : auto tumble your delicious links</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="description" content="Dumble is an experiment in creating a tumblelog from a user's delicious links."/>
+
+    <!--<link rel="shortcut icon" href="{Favicon}">
+    <link rel="alternate" type="application/rss+xml" title="RSS" id="rss-feed-head" href=""/>
+    -->
+    
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2/jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.cookie.js"></script>
+    <script type="text/javascript" src="dumble.js"></script>
+    
+    <style type="text/css" media="screen">
+      /* CSS Reset by Eric Meyer
+       * http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/
+       */
+      html, body, div, span, applet, object, iframe,
+      h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+      a, abbr, acronym, address, big, cite, code,
+      del, dfn, em, font, img, ins, kbd, q, s, samp,
+      small, strike, strong, sub, sup, tt, var,
+      dl, dt, dd, ol, ul, li,
+      fieldset, form, label, legend,
+      table, caption, tbody, tfoot, thead, tr, th, td {
+      	margin: 0;
+      	padding: 0;
+      	border: 0;
+      	outline: 0;
+      	font-weight: inherit;
+      	font-style: inherit;
+      	font-size: 100%;
+      	font-family: inherit;
+      	vertical-align: baseline;
+      }
+      /* remember to define focus styles! */
+      :focus {
+      	outline: 0;
+      }
+      body {
+      	line-height: 1;
+      	color: black;
+      	background: white;
+      }
+      ol, ul {
+      	list-style: none;
+      }
+      /* tables still need 'cellspacing="0"' in the markup */
+      table {
+      	border-collapse: separate;
+      	border-spacing: 0;
+      }
+      caption, th, td {
+      	text-align: left;
+      	font-weight: normal;
+      }
+      blockquote:before, blockquote:after,
+      q:before, q:after {
+      	content: "";
+      }
+      blockquote, q {
+      	quotes: "" "";
+      }
+
+      body {
+        background:#262523;
+        color: #ddc;
+        font: normal 14px "Trebuchet MS", Helvetica, Arial, sans-serif;
+        line-height: 1.5em;
+      }
+
+        b, strong {
+            font-weight: bold;
+        }
+        
+        abbr,acronym {
+            border-bottom:1px dotted #CC9933;
+            cursor:help;
+        }
+        
+        em, i {
+            font-style: italic;
+        }
+      
+      h1 {
+        font-size: 2.5em;
+        font-weight: bold;
+        line-height: 1em;
+      }
+      
+      h2 {
+        color: #ccb;
+        font-size: 1em;
+        font-weight: normal;
+        padding-left: 3em;
+      }
+      
+      p {
+        margin: 0 0 1.5em;
+      }
+      
+      a, a:visited, a:active {
+        color: #94a970;
+        text-decoration: underline;
+      }
+      
+      a:hover {
+        color: #262523;
+        text-decoration: none;
+      }
+      
+      abbr {
+        border-bottom-width: 1px;
+        border-bottom-style: dotted;
+      }
+      
+      blockquote {
+        background-color: #4f534f;
+        border: 1px solid #333;
+        font-style: italic;
+        margin: 1em 2em 1.5em 1em;
+        padding: .25em 1em;
+      }
+      
+      ul, ol {
+        margin: 1.5em 3em;
+      }
+      
+      ul {
+        list-style: disc;
+      }
+      
+      ol {
+        list-style: decimal;
+      }
+
+      input {
+        color: #ddc;
+        background-color: #363b39;
+        font-size: 0.9em;
+        padding: 0.3em;
+        border: 1px solid #ddc;
+        margin-right: 1em;
+      }	
+      
+      button {
+        color: #ddc;
+        background-color: #334B42;
+        font-size: 0.9em;
+        padding: 0.3em;
+        border: 1px solid #ddc;
+      }	
+
+      /* Header */
+      #header {
+        margin: 1em auto;
+        width: 40em;
+      }
+      
+      #header a, #header a:visited, #header a:active {
+        color: #eef;
+        text-decoration: none;
+      }
+      
+      #header a:hover {
+        color: #ccb;
+      }
+
+      #friends {
+        border-top: 1px solid #555;
+      }
+
+      .wordlist {
+         margin: 1em;
+         padding: 1em 0em 0em 0em;
+      }
+      .wordlist br {clear: both}
+      .wordlist ul { list-style: none;}
+      .wordlist li {
+          margin-bottom: 0.5em; padding: 0; display: block; float: left; width: 25%;
+      }
+        
+      /* Posts */
+      #posts {
+        margin: 0 auto;
+        width: 42em;
+      }
+      
+      /* Individual Post */
+      .post {
+        background-color: #363b39;
+        border: 1px solid #494949;
+        margin: 1.5em 0;
+        padding: 1em; 
+      }
+      
+      .post .date {
+        display: block;
+        font-size: 1.5em;
+        font-weight: normal;
+        margin-bottom: .5em;
+        text-align: right;
+      }
+      
+      .post .date a, .post .date a:visited, .post .date a:active {
+        color: #94a970;
+        text-decoration: none;
+      }
+      
+      .post .date a:hover {
+        color: #262523;
+      }
+      
+      .post .date a .diff {
+        font-size: 1.6em;
+        line-height: 0;
+      }
+      
+      
+      /* Titles */
+      .regular h3, .conversation h3, .link h3 {
+        color: #94a970;
+        font-size: 1.5em;
+        line-height: 1em;
+        margin-bottom: .5em;
+      }
+      
+      
+      /* Quote Posts */
+      .quote {
+        font-size: 1.5em;
+        line-height: 1em;
+      }
+      
+      .quote .source {
+        font-size: smaller; font-style: italic;
+      }
+      
+      .quote .source a {
+        text-decoration: none;
+      }
+
+      /* Link Posts */
+      .link h3 a, .link h3 a:visited, .link h3 a:active {
+        text-decoration: none;
+      }
+      
+      .link h3 a:hover {
+        text-decoration: none;
+      }
+      
+      /* Photo/Video/Audio */
+      .photo, .video, .audio {
+        text-align: center;
+        overflow: auto;
+      }
+      
+      .photo img {
+        background-color: #404040;
+        border: 1px solid #333;
+        margin: 1em 0 .5em;
+        padding: 5px;
+        vertical-align: middle;
+      }
+      
+      .photo .stars {
+        background-color: transparent;
+        border: 0pt none;
+        margin: 0;
+        padding: 0;
+        vertical-align: middle;
+      }
+
+      .photo .caption, .video .caption, .audio .caption {
+        display: block;
+        text-align: center;
+        font-size: 1.5em;
+        font-weight: normal;
+        margin-top: .5em;
+        margin-bottom: .5em;
+       }
+      
+      /* Conversations */
+      .conversation ul {
+        list-style: none;
+      }
+      
+      .conversation ul li {
+        border-bottom: 1px solid #565b59;
+        padding: .25em 0;
+      }
+      
+      .conversation ul li .person {
+        color: #565b59;
+        display: block;
+        float: left;
+        width: 9em;
+      }
+      
+      .conversation ul li .line {
+        display: block;
+        margin-left: 10em;
+      }
+      
+      /* Previous and Next Links */
+      #previous-next {
+        font-size: 1.25em;
+        margin: 3em 0 2em;
+        text-align: center;
+      }
+      
+      #previous-next .pagecount {
+        margin: 0 1.5em;
+      }
+      
+      #previous-next a, #previous-next a:visited, #previous-next a:active {
+        text-decoration: none;
+      }
+      
+      #previous-next a:hover {
+        color: #ddc;
+      }
+      
+      /* Footer */
+      #footer {
+        border-top: 1px solid #555;
+        color: #555;
+        margin: 0 auto;
+        width: 40em;
+      }
+      
+      #footer ul {
+        list-style: none;
+        text-align: center;
+      }
+      
+      #footer ul li {
+        display: inline;
+        margin: 0 1em;
+      }
+      
+      #footer ul li a, #footer ul li a:visited, #footer ul li a:active {
+        color: #94a970;
+        text-decoration: none;
+      }
+      
+      #footer ul li a:hover {
+        text-decoration: underline;
+      }
+
+      #history {
+        text-align: left;
+        position: absolute;
+        width: 15em;
+        background-color: #363b39;
+        border: 1px solid #494949;
+        margin-left: 44em;
+        padding: 0em; 
+      }
+
+      #history h2 {text-align: center; padding: 0.2em; border-bottom: 1px solid #494949;
+                   font-size: 1.2em;}
+      #history ul {list-style: none; margin: 1em 1em 0.5em 1em;}
+      #history-clear a, #history-clear a:visited, 
+      #history-clear a:active, #history-clear a:hover {text-decoration: none; color: #555;}
+    </style>
+    
+<!--[if IE]>
+    <style type="text/css" media="screen">
+      .conversation ul li {
+        width: 98%;
+      }
+    </style>
+<![endif]-->
+  </head>
+<body>
+    <div id="header">
+      <h1><a href=".">Dumble: delicious tumblelog</a></h1>
+      <h2>auto tumble your delicious links</h2>
+    </div>
+    
+    <div id="posts">
+    
+      <div id="history"><h2>Session History</h2><ul></ul>
+        <h2 id="history-clear">
+            <a href="" onClick="javascript:$('#history-clear').hide();$('#history ul').slideUp('slow').empty();Dumble.updateHistory();return false;">Clear?</a>
+        </h2>
+      </div>
+
+      <div class="post" style="background-color: #334B42;">
+        <div class="regular">
+          <h3 id="aboutHeader" style="color: #eef; text-align: center;">What is Dumble?</h3>
+          <div id="about"><strong>Dumble</strong> is an <a href="http://oohembed.com/" target="_blank">oohEmbed</a> powered <a href="http://antrix.net/journal/techtalk/dumble.html" target="_blank">experiment</a> in creating a <a href="http://en.wikipedia.org/wiki/Tumblelog" target="_blank">tumblelog</a> from a user's <a href="http://delicious.com/" target="_blank">delicious.com</a> links.<br/><br/>To create a tumblelog for a different delicious user, just modify the details below.
+            <div style="margin: 1em 1em 0em 1em; padding: 1em 1em 0em 1em;">
+            <form id="sourceForm" style="margin-bottom: 2em;">
+            Username: <input id="sourceUser" type="text" size="10"/>
+            A tag (optional): <input id="sourceTag" type="text" size="10"/>
+            <button type="submit">Update</button>
+            </form>
+            </div>
+            <div id="tags" class="wordlist">
+                <h3 style="text-align: center; color: #ddc;"></h3>
+                <ul id="tags-list" class="wordlist"></ul><br/>
+            </div>
+            
+            <div style="border-top: 1px solid #555; padding: 1em; margin: 1em;">
+                Need a link to this page? &nbsp;<a id='permalink' href="">Here you go!</a>
+                &nbsp;Or get the feed! &nbsp;<a id='rss-feed-body' style="border: none;" href=""><img style="vertical-align: middle" src="images/feed-icon.png" alt="RSS Feed icon"/></a><br/><br/>
+              There's also a <a href="javascript:{var b='http://oohembed.com/dumble/?u='; var u=document.location.href;m = /del\.icio\.us\/([\w\.]+)\/?/i.exec(u);if(m && m[1] != 'tag' && m[1] != 'network' && m[1] != 'subscriptions' && m[1] != 'url' && m[1] != 'for') {var go = b+m[1]; n = /del\.icio\.us\/\w+\/(\w+)\/?/i.exec(u); if (n) {go = go + '&t=' + n[1];} document.location.href=go;} else {alert('Could not figure out delicious user name');}}">View in Dumble</a> bookmarklet and a similar <a href="http://antrix.net/stuff/gm/dumble.oohembed.user.js">greasemonkey script</a> to integrate Dumble with delicious.
+            </div>
+            <div id="friends" class="wordlist">
+                <h3 style="text-align: center; color: #ddc;"></h3>
+                <ul id="friends-list" class="wordlist"></ul><br/>
+                <div id="networklink" style="text-align: center; margin-top: 1em;">
+                    <a target="_blank"></a>
+                </div> 
+            </div>
+          </div>
+          
+        </div> <!-- end regular post -->
+      </div>        
+
+        <div id="dynposts">
+      <!-- dynamic posts inserted here -->
+        </div>
+        
+      <div id="previous-next">
+        <a href="" onClick="javascript:Analytics.trackPage('/dumble/--more--/');Dumble.updatePage();return false;">More?</a>
+      </div> 
+
+    </div> <!-- end posts-->
+    
+    <div id="footer">
+      <ul>
+        <li>Engine <a href="http://jquery.com/" target="_blank">jQuery</a></li>
+        <li>Designer <a href="http://cubicle17.com/" target="_blank">Bill Israel</a></li>
+        <li>Code Monkey <a href="http://antrix.net/" target="_blank">Deepak Sarda</a></li>
+      </ul>
+    </div>
+  </body>
+</html>

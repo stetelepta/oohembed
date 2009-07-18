@@ -1,0 +1,257 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta name="description" content="oohEmbed is an oEmbed compatible provider of HTML embed codes for various web sites"/>
+        <title>oohEmbed.com - your one-stop oEmbed provider</title>
+        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.2/build/reset/reset-min.css" />
+        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.2/build/base/base-min.css" /> 
+        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.2/build/fonts/fonts-min.css" /> 
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2/jquery.min.js"></script>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+        <style type="text/css">
+            html, body {
+                height: 100%;
+                background-color: #EFEFEF;
+            }
+            body {
+                margin: 1em;
+                color: black;
+                /*font-family: Consolas, 'Lucida Console', 'DejaVu Sans Mono', Monaco, 'Courier New', monospace; */
+                font-family: monospace;
+            }
+            pre {
+                background-color: #e0e0e0;
+                border: 1px solid #999;
+                padding: 8px;
+                margin: 0px 20px 10px 0px;
+            }
+            code {
+                background-color: #e0e0e0;
+                border: 1px solid #999; 
+                padding: 0px 2px;
+            }
+            .naked {
+                margin: 0em;
+            }
+            .naked li {
+                list-style-type: none;
+                margin-left: 0;
+                padding: 0.5em;
+                text-indent: -0.5em;
+            }
+        </style>
+
+            
+    </head>
+
+    <body>
+{% filter markdown %}
+# Welcome to oohEmbed!
+## oohEmbed What?
+
+In a nutshell: __oohEmbed is an oEmbed compatible provider of HTML embed codes for various web sites.__
+
+What is this oEmbed? From [oembed.com](http://www.oembed.com/):
+
+> oEmbed is a format for allowing an embedded representation of a URL on third party sites. 
+> The simple API allows a website to display embedded content (such as photos or videos) when 
+> a user posts a link to that resource, without having to parse the resource directly.
+
+Don't get it? Perhaps an example will make things clear. If you make a URL request like this:
+{% endfilter %}
+
+<pre>http://oohembed.com/oohembed/?url=http%3A//www.amazon.com/Myths-Innovation-Scott-Berkun/dp/0596527055/</pre>
+
+{% filter markdown %}
+You will get this as the response:
+{% endfilter %}
+
+<pre>{
+     "type": "photo", 
+     "version": "1.0", 
+     "provider_name": "Amazon Product Image", 
+     "url": "http://ecx.images-amazon.com/images/I/31%2BfVjL2nqL.jpg", 
+     "height": "500", 
+     "width": "317", 
+     "thumbnail_url": "http://ecx.images-amazon.com/images/I/31%2BfVjL2nqL._SL75_.jpg", 
+     "thumbnail_height": "75", 
+     "thumbnail_width": "48", 
+     "asin": "0596527055", 
+     "title": "The Myths of Innovation", 
+     "author_name": "Scott Berkun", 
+     "author_url": "http://www.amazon.com/gp/redirect.html%3FASIN=0596527055%26location=/Myths-Innovation-Scott-Berkun/dp/0596527055"
+}</pre>
+
+{% filter markdown %}
+There, that should make everything clear. Still no? Then perhaps you should go and read this excellent article introducing [oEmbed & oohEmbed](http://ciaranmcnulty.com/blog/2009/01/embedding-third-party-content-in-your-site-using-oembed) by Ciaran McNulty. Once you are done reading that, come back here for our Q&A!
+
+## Q & A
+
+1.  How is this useful?   
+    I built oohEmbed to further development of [Dumble](/dumble/?u=antrix&t=dumbletest), my del.icio.us tumblelog. 
+    But I imagine oohEmbed could be useful in several other places. For example, someone could build a 
+    wordpress plugin backed by the oohEmbed web service that makes embedding content into blog posts 
+    easier. (If you do build such a plugin, let me know!)
+
+    _New:_ Scroll down to see a list of [consumer sites and apps](#consumers) that use oohEmbed.
+
+2.  So what sites can oohEmbed provide information for?   
+    Quite a few to start with - scroll down to see [the list](#configuration). I'll be adding more sites as I find time!
+
+3.  Is oohEmbed really oembed.com spec compliant?   
+    Almost. oohEmbed differs in some ways from the spec.
+    *  It usually ignores the maxwidth/maxheight request parameters.
+    *  Only JSON responses are provided. I don't have any plans of supporting XML.
+    *  You can specify a JSON callback.
+
+4.  JSON Callback?    
+    To overcome the [same origin policy](http://en.wikipedia.org/wiki/Same_origin_policy) of web browsers, you can specify a 'callback' parameter as part of your request.
+    e.g., if you specify 'callback=myCallback' as part of the request, then the JSON response object will be wrapped as a parameter to the myCallback function.
+
+5.  Will this callback expose my site to cross-site attacks?    
+    Possibly. Although you have to trust that I won't be doing anything funny or malicious intentionally, oohEmbed itself is just a proxy to the target website.
+    So if the target website sends back something bad, all bets are off! 
+
+6.  So I can't sue you if anything goes wrong?    
+    No! By using this service, you agree that I will not be held liable for anything that goes wrong. I do appreciate bug reports though.
+
+7.  Is it free to use?    
+    Yes. At the moment, all this service costs me is $10/year for the domain name and several hours of my free time.
+    Google App Engine kindly hosts the app for free (thanks!) so that's taken care of. 
+
+8.  But is it _really free_?    
+    Oh yes, it is _really free_ too! You can get access to the code that powers oohEmbed.com from the [oohEmbed project on Google Code](http://oohembed.googlecode.com).
+    The code is available under a liberal BSD license so feel free to use it as you wish. Of course, I'd appreciate any code contributions too!
+
+8.  So I can use the site as much as I want?    
+    Yes, but to a limit. If I detect abuse, I reserve the right to throttle your use or worse, ban you from accessing the service.
+
+9.  Great, how do I sign-up?!    
+    Umm.. there is no sign-up. Here's your service, run with it: http://oohembed.com/oohembed/?url=
+
+10. I'm all fired up. Where's the oEmbed provider configuration for the oohEmbed service to get me going?    
+    Just scroll down this page for the [API endpoint and supported URL schemes](#configuration).
+
+11. I notice that you also support websites which already have an oEmbed compliant provider. Why?    
+    Two reasons:
+    *  They don't support the 'callback' parameter for JSON requests
+    *  As a developer, wouldn't it be nice if there was just one API endpoint for all sites 
+       instead of having to support one endpoint for each?
+
+12. I represent one of the sites for which oohEmbed provides responses and I don't like it.     
+    Fair enough. Drop me an <a href="mailto:deepak@antrix.deletethis.net">email</a> and I'll stop supporting your site.
+
+13. How do I report bugs? Do you take feature requests?    
+    Sure. For now, just use the [comment form](#comments) at the end of this page. If this thing gets popular, I'll switch to more traditional
+    channels of bug tracking.    
+    _Update:_ Now that the oohEmbed open source project is live, you can use the [issue tracker](http://code.google.com/p/oohembed/issues/) on Google Code!
+
+14. Anything else?    
+    Nothing, except that oohEmbed wouldn't be possible without the folks behind the oEmbed.com spec so kudos to them.
+    And thanks again to Google for creating App Engine!
+ 
+15. Who are you?    
+    I am Deepak Sarda and you can find me <a href="http://antrix.net/" rel="me">here</a>.
+
+## <a name='configuration'>Configuration</a>
+
+There's just one API endpoint: <code>http://oohembed.com/oohembed/</code>. The supported URL schemes are listed below. If you call the API endpoint with a URL that doesn't confirm to one of the schemes listed below, you will get a 404 response. As mentioned earlier, you can use a `callback` parameter when calling the endpoint.
+
+Click on any item in the list below to see configuration details for that item. 
+{% endfilter %}
+
+<ol>
+    {% for p in providers %}
+    <li style="margin-bottom: 1.5em;"><strong class="provider-title">{{ p.title }}</strong>
+        <ul class="naked provider-body"><li>{{ p.description }}</li>
+        <li><em>URL scheme:</em> <code>{{ p.url|escape }}</code></li>
+        <li><em>Example:</em> <code>
+            {{ '<a target="_blank" href="http://'+ hostname + '/oohembed/?url='+(p.example_url|urlencode)+'">http://'+hostname+'/oohembed/?url='+(p.example_url|urlencode)+'</a>' }}</code></li></ul>
+    </li>
+    {% endfor %}
+</ol>
+
+{% filter markdown %}
+## <a name='consumers'>Consumers</a>
+
+These consumers currently use the oohEmbed service. 
+
+* [Dumble](/dumble/?u=antrix&t=linker) of course, being the first consumer and my reason for creating oohEmbed.
+* [280 Slides](http://blog.280north.com/2008/06/25/280-slides-gets-smarter-about-links/), a snazzy web-app to create presentations.
+* [Buckybase](http://buckybase.blogspot.com/2008/06/oembed-support.html), a social web database with bidirectional hyperlinks.
+* [Indy.com](http://www.indy.com/), a local entertainment site by The Indianapolis Star.
+* [Ars Technica](http://arstechnica.com/), a technology news and analysis site.
+* [DropAVideo](http://dropavideo.com/), a Brazilian video micro-blogging service.
+
+Moreover, oohEmbed support is already baked into these libraries: 
+
+* [django-oembed](http://code.google.com/p/django-oembed/)
+* [ruby-oembed](http://github.com/judofyr/ruby-oembed/tree/master) 
+* [oembed_links gem](http://github.com/netshade/oembed_links/tree/master) 
+* [jquery-oembed](http://code.google.com/p/jquery-oembed/)
+* [drupal-oembed](http://github.com/voxpelli/drupal-oembed/tree/master)
+
+If you are using oohEmbed, please leave a comment below and I'll add you to this list!
+
+## Changes
+
+* _6th June, 2009:_ Added missing width, height elements to Youtube response. Added title, author and thumbnail elements to Metacafe response.
+* _10th May, 2009:_ New LiveJournal UserPic provider. More data returned in Youtube provider. Removed Pownce provider. Updated Consumers section.
+* _31st March, 2009:_ Updates to Consumers section.
+* _2nd March, 2009:_ New twitpic.com support.
+* _3rd February, 2009:_ New 5min.com, nfb.ca & thedailyshow.com support.
+* _14th November, 2008:_ Released oohEmbed source. Fixed mime-type of responses. Moved Dumble to new delicious.com API.
+* _23rd July, 2008:_ New Vimeo support. Some text encoding related fixes.
+* _30th June, 2008:_ New SlideShare provider. Cleaned up homepage (added consumers). Several minor fixes.
+* _12th June, 2008:_ New IMDb.com movie photo/link provider.
+* _11th June, 2008:_ New Wordpress.com blogs support. Several fixes in [Dumble](/dumble/).
+* _3rd June, 2008:_ New hulu.com & revision3.com support
+* _1st June, 2008:_ Launch
+{% endfilter %}
+
+<hr/>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.provider-body').hide();
+
+        $('.provider-title').hover(
+            function() {
+                $(this).css({ cursor: 'pointer' });
+            }, 
+            function() {
+                $(this).css({ cursor: 'default' });
+            }
+        );
+
+        $('.provider-title').click(
+            function() {
+                $(this).next('.provider-body').slideToggle('fast');
+            }
+        );
+
+    });
+</script>
+
+{% if production %}
+<a name='comments'></a>
+<div style="margin-top: 1em;" id="disqus_thread"></div><script type="text/javascript" src="http://disqus.com/forums/oohembed/embed.js"></script><noscript><a href="http://oohembed.disqus.com/?url=ref">View the forum thread.</a></noscript><a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-1736551-3");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+
+{% endif %}
+
+    </body>
+</html>
+
