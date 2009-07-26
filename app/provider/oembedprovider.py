@@ -84,3 +84,13 @@ class NFBProvider(Provider, Proxy):
     example_url = 'http://www.nfb.ca/film/blackfly/'
 
     service_url = 'http://www.nfb.ca/remote/services/oembed/?'
+
+class DailymotionProvider(Provider, Proxy):
+    """Just a proxy for the original oEmbed compliant service"""
+    title = 'Dailymotion'
+    url = 'http://*.dailymotion.com/*'
+    url_re = r'dailymotion\.com/.*'
+    example_url = 'http://www.dailymotion.com/video/x5ioet_phoenix-mars-lander_tech'
+
+    service_url = 'http://www.dailymotion.com/api/oembed/?'
+
