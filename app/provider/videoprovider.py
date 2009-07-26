@@ -229,7 +229,7 @@ class SlideShareProvider(Provider):
 
     _api_key = 'jQIEOY0W'
     _api_secret = 'YDJFeM3S' # Please don't abuse!
-    _api_url = 'http://www.slideshare.net/api/1/get_slideshow_info?'
+    _api_url = 'http://www.slideshare.net/api/2/get_slideshow?'
 
     def fetch_info(self, query_url):
         from hashlib import sha1
@@ -267,7 +267,7 @@ class SlideShareProvider(Provider):
 
         # Slideshare's embed code is wrapped in an extra
         # left-aligned div. Strip that div out
-        m = re.match(r'<div.*?>(?P<code>.+)</div>', result['EmbedCode'], re.I)
+        m = re.match(r'<div.*?>(?P<code>.+)</div>', result['Embed'], re.I)
         if not m:
             raise OohEmbedError("Could not parse response from SlideShare")
 
@@ -282,10 +282,12 @@ class SlideShareProvider(Provider):
             response['height'] = m.group('height')
 
         try:
-            response['author_name'] = result['UserLogin']
-            response['author_url'] = 'http://www.slideshare.net/'+result['UserLogin']
+            response['author_name'] = result['Username']
+            response['author_url'] = 'http://www.slideshare.net/'+result['Username']
         except KeyError:
             pass
+
+        response['thumbnail_url'] = result['ThumbnailURL']
 
         json_response = json.dumps(response, ensure_ascii=False, indent=1)
         return json_response

@@ -72,7 +72,7 @@ OohembedProvider = function(url, caption, notes) {
     this.quote_template = '<div class="quote">&#8220;{text}&#8221;&nbsp;&nbsp;' + 
                 '<span class="source"><a href="{url}" target="_blank">{source}</a></span></div><div style="margin: 1em;">{notes}</div>{html}'; 
 
-    $.getJSON('http://'+location.host+'/oohembed/?url=' + escape(url) + '&format=json&callback=?', 
+    $.getJSON('http://'+location.host+'/oohembed/?url=' + escape(url) + '&format=json&maxwidth=480&callback=?', 
         function(data) {
             firelog('received data: ' + data.provider_name);
             if (data.type == 'video') {
