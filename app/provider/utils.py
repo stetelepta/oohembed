@@ -104,3 +104,7 @@ def get_url(url):
         logging.warn("Error fetching url %s" % url, exc_info=True)
         raise OohEmbedError("Error fetching url %s" % query_url)
 
+
+def make_key(query_url, extra_params):
+    keys = sorted(extra_params.keys())
+    return query_url + "|".join(["%s:%s" % (key, extra_params[key]) for key in keys])

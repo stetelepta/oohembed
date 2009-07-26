@@ -43,6 +43,8 @@ import os
 import urllib
 
 from google.appengine.ext import webapp
+from google.appengine.api import memcache
+
 from jinja import Environment, FileSystemLoader
 
 from provider import *
@@ -80,10 +82,30 @@ class EndPoint(webapp.RequestHandler):
         if self.request.get('maxheight'):
             extra_params['maxheight'] = self.request.get('maxheight').encode('utf-8')
 
+        # Check memcache
+        resp = memcache.get(make_key(query_url, extra_params))
+        if resp:
+            logging.debug('Cache hit for url %s' % query_url)
+            if callback:
+                self.response.headers['Content-Type'] = 'text/javascript'
+                self.response.out.write('%s(%s);' % (callback, resp))
+            else:
+                self.response.out.write(resp)
+            return
+
+
+        resp = None
+
         for p in self.providers:
             try:
                 resp = p.provide(query_url, extra_params)
                 if resp:
+                    # Save to memcache first
+                    if not memcache.set(make_key(query_url, extra_params), resp, time=86400):
+                        logging.error('Failed saving cache for url %s' % query_url)
+                    else:
+                        logging.debug('Saved url response to cache for url %s' % query_url)
+
                     if callback:
                         self.response.headers['Content-Type'] = 'text/javascript'
                         self.response.out.write('%s(%s);' % (callback, resp))
@@ -101,9 +123,11 @@ class EndPoint(webapp.RequestHandler):
                             "url from the remote host" % e.code)
                 return
             except OohEmbedError, e:
+                logging.error("Throwing OohEmbed error", exc_info=True)
                 self.error(500)
                 return self.response.out.write(e.reason)
             except Exception, e:
+                logging.error("Throwing 500 error", exc_info=True)
                 self.error(500)
                 return self.response.out.write("Unrecoverable error. Please try again." + 
                         " If the error persists, please file a bug at http://oohembed.googlecode.com/")
@@ -140,8 +164,12 @@ urls = [('/', MainPage),
         ('/oohembed\/?', EndPoint)]
 
 def main():
-    application = webapp.WSGIApplication(
-          urls, debug=True)
+    if 'Development' in os.environ['SERVER_SOFTWARE']:
+        logging.getLogger().setLevel(logging.DEBUG)
+    else:
+        logging.getLogger().setLevel(logging.INFO)
+
+    application = webapp.WSGIApplication(urls, debug=True)
     wsgiref.handlers.CGIHandler().run(application)
 
 if __name__ == "__main__":
