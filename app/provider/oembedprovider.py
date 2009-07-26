@@ -3,34 +3,23 @@ import re
 import urllib
 
 from django.utils import simplejson as json
-from google.appengine.api import urlfetch
 
 from base import Provider
+from utils import *
 
 class Proxy():
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         params = {'url': query_url, 'format': 'json'}
         if extra_params:
             params.update(extra_params)
 
         fetch_url = self.service_url + urllib.urlencode(params)
-
-        try:
-            result = urlfetch.fetch(fetch_url)
-            if result.status_code != 200:
-                logging.error('%s returned error (code %s): "%s" for url: %s' % (
-                         self.title, result.status_code, result.content, query_url))
-                return None
-            else:
-                return result.content
-        except urlfetch.Error, e:
-            logging.error("error fetching url %s" % query_url, exc_info=True)
-            return None
-
+        result = get_url(fetch_url)
+        return result
 
 class FlickrProvider(Provider, Proxy):
     """Just a proxy for the original oEmbed compliant service"""

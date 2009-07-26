@@ -4,10 +4,9 @@ import urllib
 
 from django.utils import simplejson as json
 import feedparser
-from google.appengine.api import urlfetch
 
 from base import Provider
-import utils
+from utils import *
 
 class YoutubeProvider(Provider):
     """Provides the flash video embed code"""
@@ -19,7 +18,7 @@ class YoutubeProvider(Provider):
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         fetch_url = 'http://gdata.youtube.com/feeds/api/videos/' + matches.group('videoid') + '?alt=json'  
 
@@ -73,7 +72,7 @@ class MetacafeProvider(Provider):
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         fetch_url = 'http://www.metacafe.com/api/item/' + matches.group('videoid') + '/'  
 
@@ -124,7 +123,7 @@ class GoogleVideoProvider(Provider):
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         return self.json_template % matches.group('videoid')
 
@@ -147,7 +146,7 @@ class CollegeHumorVideoProvider(Provider):
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         return self.json_template % matches.group('videoid')
 
@@ -170,7 +169,7 @@ class FunnyOrDieProvider(Provider):
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         return self.json_template % matches.group('videoid')
 
@@ -193,7 +192,7 @@ class FiveMinVideoProvider(Provider):
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         return self.json_template % matches.group('videoid')
 
@@ -216,7 +215,7 @@ class DailyShowVideoProvider(Provider):
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         return self.json_template % matches.group('videoid')
 
@@ -244,29 +243,20 @@ class SlideShareProvider(Provider):
                   'slideshow_url': query_url}
 
         fetch_url = self._api_url + urllib.urlencode(params)
-
-        try:
-            result = urlfetch.fetch(fetch_url)
-            if result.status_code != 200:
-                logging.error('slideshare returned error (code %s): "%s" for url: %s' % (result.status_code, result.content, query_url))
-                return None
-        except urlfetch.Error, e:
-            logging.error("error fetching url %s" % query_url, exc_info=True)
-            return None
-
-        return result.content
+        result = get_url(fetch_url)
+        return result
 
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         result = self.fetch_info(query_url)
         
         if not result:
-            return None
+            raise OohEmbedError("Did not get response from SlideShare")
 
-        result = utils.xml2dict(result) 
+        result = xml2dict(result) 
 
         response = {'version' : '1.0',
                     'type': 'video',
@@ -279,7 +269,8 @@ class SlideShareProvider(Provider):
         # left-aligned div. Strip that div out
         m = re.match(r'<div.*?>(?P<code>.+)</div>', result['EmbedCode'], re.I)
         if not m:
-            return None
+            raise OohEmbedError("Could not parse response from SlideShare")
+
         response['html'] = m.group('code')
 
         m = re.search(r'width="(?P<width>\d+)"', response['html'], re.I)

@@ -4,9 +4,9 @@ import urllib
 import xml.etree.cElementTree as ET
 
 from django.utils import simplejson as json
-from google.appengine.api import urlfetch
 
 from base import Provider
+from utils import *
 
 class ImdbProvider(object):
     """Photo and some metadata for IMDb movie urls. Check sample response to see what metadata beyond that
@@ -33,25 +33,17 @@ class ImdbProvider(object):
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         resource_id = matches.group('resource')
         params = urllib.urlencode({'ResourceId': resource_id})
 
         fetch_url = 'http://cc00.clearspring.com/imdb/LookupTitle?' + params
-
-        try:
-            result = urlfetch.fetch(fetch_url)
-            if result.status_code != 200:
-                logging.error('imdb returned error (code %s): "%s" for url: %s' % (result.status_code, result.content, query_url))
-                return None
-        except urlfetch.Error, e:
-            logging.error("error fetching url %s" % query_url, exc_info=True)
-            return None
+        result = get_url(fetch_url)
 
         response = {'type': u'photo', 'version': u'1.0', 'provider_name': self.title}
 
-        tree = ET.fromstring(result.content)
+        tree = ET.fromstring(result)
         if not self.set_value(tree, 'Source', response, 'url'):
             response['type'] = 'link'
         else:
@@ -85,7 +77,7 @@ class AmazonProvider(Provider):
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         params = {'Service': 'AWSECommerceService',
                 'SubscriptionId': '1FTX8DJ3D0NCX9DRWQR2', # Please don't abuse!
@@ -98,20 +90,13 @@ class AmazonProvider(Provider):
                 'ItemId': matches.group('asin')}
         fetch_url = 'http://xml-us.amznxslt.com/onca/xml?' + urllib.urlencode(params)
 
-        try:
-            result = urlfetch.fetch(fetch_url)
-            if result.status_code != 200:
-                logging.error('amazon returned error (code %s): "%s" for url: %s' % (result.status_code, result.content, query_url))
-                return None
-        except urlfetch.Error, e:
-            logging.error("error fetching url %s" % query_url, exc_info=True)
-            return None
+        result = get_url(fetch_url)
 
         try:
-            parsed = json.loads(result.content)
+            parsed = json.loads(result)
         except:
-            logging.error("error decoding as json. String was\n%s" % result.content, exc_info=True)
-            return None
+            logging.error("error decoding as json. String was\n%s" % result, exc_info=True)
+            raise OohEmbedError("Error decoding response from Amazon.")
 
         item = parsed['Item']
 
@@ -156,7 +141,7 @@ class TwitPicProvider(Provider):
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         photo_url = 'http://twitpic.com/show/full/' + matches.group('id')
         thumb_url = 'http://twitpic.com/show/thumb/' + matches.group('id')
@@ -178,23 +163,16 @@ class LJAvatarProvider(Provider):
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         fetch_url = 'http://ljpic.seacrow.com/json/' + matches.group('id') 
-        try:
-            result = urlfetch.fetch(fetch_url)
-            if result.status_code != 200:
-                logging.error('LJPic returned error (code %s): "%s" for url: %s' % (result.status_code, result.content, query_url))
-                return None
-        except urlfetch.Error, e:
-            logging.error("error fetching url %s" % query_url, exc_info=True)
-            return None
+        result = get_url(fetch_url)
 
         try:
-            parsed = json.loads(result.content)
+            parsed = json.loads(result)
         except:
-            logging.error("error decoding as json. String was\n%s" % result.content, exc_info=True)
-            return None
+            logging.error("error decoding as json. String was\n%s" % result, exc_info=True)
+            raise OohEmbedError("Error decoding response from LJPic.")
 
         response = {'type': u'photo', 'version': u'1.0', 'provider_name': self.title,
                 'url': parsed['image'], 'author_name': parsed['name']}

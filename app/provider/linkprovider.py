@@ -3,10 +3,10 @@ import re
 import urllib
 
 from django.utils import simplejson as json
-from google.appengine.api import urlfetch
 from BeautifulSoup import BeautifulSoup, NavigableString
 
 from base import Provider
+from utils import *
 
 class TwitterStatusProvider(Provider):
     """Provides info on a particular tweet as a link type oEmbed response"""
@@ -18,28 +18,22 @@ class TwitterStatusProvider(Provider):
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         fetch_url = 'http://twitter.com/statuses/show/' + matches.group('status') + '.json'
-        try:
-            result = urlfetch.fetch(fetch_url)
-            if result.status_code != 200:
-                logging.error('twitter returned error (code %s): "%s" for url: %s' % (result.status_code, result.content, query_url))
-                return None
-        except urlfetch.Error, e:
-            logging.error("error fetching url %s" % query_url, exc_info=True)
-            return None
+
+        result = get_url(fetch_url)
 
         try:
-            parsed = json.loads(result.content)
+            parsed = json.loads(result)
         except:
-            logging.error("error decoding as json. String was\n%s" % result.content, exc_info=True)
-            return None
+            logging.error("error decoding as json. String was\n%s" % result, exc_info=True)
+            raise OohEmbedError("Error decoding response")
 
         response = {'type': u'link', 'version': u'1.0', 'provider_name': self.title}
 
         if not 'text' in parsed:
-            return None
+            raise OohEmbedError("Error decoding response")
         else:
             response['title'] = parsed['text']
 
@@ -73,20 +67,13 @@ class WikipediaProvider(Provider):
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         fetch_url = query_url + '?action=render'
-        try:
-            result = urlfetch.fetch(fetch_url)
-            if result.status_code != 200:
-                logging.error('wikipedia returned error (code %s): "%s" for url: %s' % (
-                                    result.status_code, result.content, query_url))
-                return None
-        except urlfetch.Error, e:
-            logging.error("error fetching url %s" % query_url, exc_info=True)
-            return None
 
-        soup = BeautifulSoup(result.content)
+        result = get_url(fetch_url)
+
+        soup = BeautifulSoup(result)
 
         page = u''
         count = 0
@@ -117,20 +104,13 @@ class WordpressProvider(Provider):
     def provide(self, query_url, extra_params=None):
         matches = self.url_regex.search(query_url)
         if not matches:
-            return None
+            raise UnsupportedUrlError()
 
         fetch_url = query_url 
-        try:
-            result = urlfetch.fetch(fetch_url)
-            if result.status_code != 200:
-                logging.error(u'Wordpress returned error (code %s): "%s" for url: %s' % (
-                                result.status_code, unicode(result.content, 'utf-8'), query_url))
-                return None
-        except urlfetch.Error, e:
-            logging.error(u"error fetching url %s" % query_url, exc_info=True)
-            return None
 
-        soup = BeautifulSoup(result.content)
+        result = get_url(fetch_url)
+
+        soup = BeautifulSoup(result)
 
         response = {'type': u'link', 'version': u'1.0', 'provider_name': self.title}
         
@@ -139,14 +119,14 @@ class WordpressProvider(Provider):
         content = soup.find('div', 'snap_preview')
         if not content:
             logging.error("Didn't find any snap_preview node on this page: %s" % query_url)
-            return None
+            raise OohEmbedError("Could not parse the Wikipedia page")
 
         page = u''
         count = 1000
         para = content.first()
         if not para:
             logging.error("Didn't find any first paragraph on this page: %s" % query_url)
-            return None
+            raise OohEmbedError("Could not parse the Wikipedia page")
 
         while len(page) <= count:
             page += unicode(para)

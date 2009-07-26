@@ -1,4 +1,6 @@
+import logging
 import xml.etree.cElementTree as ET
+from google.appengine.api import urlfetch
 
 # xml to dict stuff from 
 # http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/410469
@@ -69,4 +71,36 @@ def xml2dict(xml_string):
 
     root = ET.fromstring(xml_string)
     return XmlDictConfig(root)
+
+class OohEmbedError(Exception):
+    def __init__(self, value):
+        self.reason = value
+
+    def __str__(self):
+        return repr(self.reason)
+
+class UnsupportedUrlError(OohEmbedError):
+    def __init__(self):
+        super(UnsupportedUrlError, self).__init__("This provider does not support this URL")
+
+class HTTPError(Exception):
+    def __init__(self, url, code, content=""):
+        self.url = url
+        self.code = code
+        self.content = content
+
+    def __str__(self):
+        return "HTTPError %s on url %s" % (self.url, self.code)
+
+def get_url(url):
+    try:
+        result = urlfetch.fetch(url, headers={'User-Agent': 'oohEmbed.com'})
+        if result.status_code != 200:
+            logging.debug('Error code %s while fetching url: %s' % (result.status_code, url))
+            raise HTTPError(url, result.status_code, result.content)
+        else:
+            return result.content
+    except urlfetch.Error, e:
+        logging.warn("Error fetching url %s" % url, exc_info=True)
+        raise OohEmbedError("Error fetching url %s" % query_url)
 

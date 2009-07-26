@@ -1,4 +1,5 @@
 import re
+from google.appengine.api import urlfetch
 
 """Plugin infrastructure based on Marty Alchin's post at
 http://gulopine.gamemusic.org/2008/jan/10/simple-plugin-framework/

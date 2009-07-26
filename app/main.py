@@ -4,7 +4,7 @@ Your one-stop oEmbed provider
 See http://code.google.com/p/oohembed/
 and http://oohembed.com/
 
-Copyright (c) 2008, Deepak Sarda
+Copyright (c) 2008-2009, Deepak Sarda
 
 All rights reserved.
 
@@ -45,7 +45,7 @@ import urllib
 from google.appengine.ext import webapp
 from jinja import Environment, FileSystemLoader
 
-from provider import Provider
+from provider import *
 
 class EndPoint(webapp.RequestHandler):
     providers = Provider.get_providers()
@@ -81,24 +81,38 @@ class EndPoint(webapp.RequestHandler):
             extra_params['maxheight'] = self.request.get('maxheight').encode('utf-8')
 
         for p in self.providers:
-            resp = p.provide(query_url, extra_params)
-            if resp:
-                break
+            try:
+                resp = p.provide(query_url, extra_params)
+                if resp:
+                    if callback:
+                        self.response.headers['Content-Type'] = 'text/javascript'
+                        self.response.out.write('%s(%s);' % (callback, resp))
+                    else:
+                        self.response.out.write(resp)
+                    return
+            except UnsupportedUrlError, e:
+                pass
+            except HTTPError, e:
+                self.error(e.code)
+                if e.content:
+                    self.response.out.write(e.content)
+                else:
+                    self.response.out.write("Encountered HTTP Error %s fetching " +
+                            "url from the remote host" % e.code)
+                return
+            except OohEmbedError, e:
+                self.error(500)
+                return self.response.out.write(e.reason)
+            except Exception, e:
+                self.error(500)
+                return self.response.out.write("Unrecoverable error. Please try again." + 
+                        " If the error persists, please file a bug at http://oohembed.googlecode.com/")
 
-        if not resp:
-            self.error(404)
-            self.response.out.write('Could not determine suitable ' +
-                    'representation for queried URL')
-            return
-
-        if callback:
-            self.response.headers['Content-Type'] = 'text/javascript'
-            self.response.out.write('%s(%s);' % (callback, resp))
-        else:
-            self.response.out.write(resp)
-
+        self.error(404)
+        self.response.out.write('Could not determine suitable ' +
+                'representation for queried URL')
         return
-            
+
 class MainPage(webapp.RequestHandler):
     providers = Provider.get_providers()
 
