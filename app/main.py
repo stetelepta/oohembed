@@ -41,6 +41,8 @@ import wsgiref.handlers
 import logging
 import os
 import urllib
+import email.utils
+import time
 
 from google.appengine.ext import webapp
 from google.appengine.api import memcache
@@ -86,16 +88,10 @@ class EndPoint(webapp.RequestHandler):
         resp = memcache.get(make_key(query_url, extra_params))
         if resp:
             logging.debug('Cache hit for url %s' % query_url)
-            if callback:
-                self.response.headers['Content-Type'] = 'text/javascript'
-                self.response.out.write('%s(%s);' % (callback, resp))
-            else:
-                self.response.out.write(resp)
+            self.send_response(resp, callback)
             return
 
-
         resp = None
-
         for p in self.providers:
             try:
                 resp = p.provide(query_url, extra_params)
@@ -106,11 +102,7 @@ class EndPoint(webapp.RequestHandler):
                     else:
                         logging.debug('Saved url response to cache for url %s' % query_url)
 
-                    if callback:
-                        self.response.headers['Content-Type'] = 'text/javascript'
-                        self.response.out.write('%s(%s);' % (callback, resp))
-                    else:
-                        self.response.out.write(resp)
+                    self.send_response(resp, callback)
                     return
             except UnsupportedUrlError, e:
                 pass
@@ -136,6 +128,18 @@ class EndPoint(webapp.RequestHandler):
         self.response.out.write('Could not determine suitable ' +
                 'representation for queried URL')
         return
+
+    def send_response(self, resp, callback=None):
+
+        if 'Development' not in os.environ['SERVER_SOFTWARE']:
+            self.response.headers['Expires'] = email.utils.formatdate(time.time() + 24*60*60, usegmt=True)
+            self.response.headers['Cache-Control'] = 'max-age=%d' % int(3600*24)
+
+        if callback:
+            self.response.headers['Content-Type'] = 'text/javascript'
+            self.response.out.write('%s(%s);' % (callback, resp))
+        else:
+            self.response.out.write(resp)
 
 class MainPage(webapp.RequestHandler):
     providers = Provider.get_providers()

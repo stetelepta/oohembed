@@ -3,6 +3,8 @@ version: chocochip
 runtime: python
 api_version: 1
 
+default_expiration: "15d"
+
 handlers:
 - url: /dumble/
   static_files: dumble/index.html
