@@ -153,6 +153,26 @@ class TwitPicProvider(Provider):
         json_response = json.dumps(response, ensure_ascii=False, indent=1)
         return json_response
 
+class PhodroidProvider(Provider):
+    """Provider for phodroid.com photos."""
+    title = 'Phodroid Photos'
+    url = r'http://*.phodroid.com/*/*/*'
+    url_re = r'phodroid.com/(?P<id>\d\d/\d\d/\w+)/?'
+    example_url = 'http://phodroid.com/09/06/k3q6bd'
+
+    def provide(self, query_url, extra_params=None):
+        matches = self.url_regex.search(query_url)
+        if not matches:
+            raise UnsupportedUrlError()
+
+        photo_url = 'http://s.phodroid.com/' + matches.group('id') + '.jpg'
+
+        response = {'type': u'photo', 'version': u'1.0', 'provider_name': self.title,
+                    'url': photo_url}
+
+        json_response = json.dumps(response, ensure_ascii=False, indent=1)
+        return json_response
+
 class LJAvatarProvider(Provider):
     """Avatar image for LiveJournal user. Uses http://ljpic.seacrow.com/"""
     title = 'LiveJournal UserPic'
