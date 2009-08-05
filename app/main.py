@@ -150,7 +150,7 @@ class MainPage(webapp.RequestHandler):
                     'example_url': p.example_url, \
                     'description': p.__doc__} \
                         for p in self.providers]
-        providers.sort(lambda x, y: cmp(x['title'], y['title']))
+        providers.sort(lambda x, y: cmp(x['title'].lower(), y['title'].lower()))
                  
         if 'Development' in os.environ['SERVER_SOFTWARE']:
             production = False

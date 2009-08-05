@@ -94,3 +94,12 @@ class DailymotionProvider(Provider, Proxy):
 
     service_url = 'http://www.dailymotion.com/api/oembed/?'
 
+class DailymotionProvider(Provider, Proxy):
+    """Just a proxy for the original oEmbed compliant service"""
+    title = 'blip.tv'
+    url = 'http://*.blip.tv/*'
+    url_re = r'blip\.tv/.*'
+    example_url = 'http://pycon.blip.tv/file/2058801/'
+
+    service_url = 'http://blip.tv/oembed/?'
+
