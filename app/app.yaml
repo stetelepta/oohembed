@@ -18,6 +18,10 @@ handlers:
   static_files: static/robots.txt
   upload: static/robots.txt
 
+- url: /crossdomain.xml
+  static_files: static/crossdomain.xml
+  upload: static/crossdomain.xml
+
 - url: /dumble
   static_dir: dumble
 
