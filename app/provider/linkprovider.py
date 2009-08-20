@@ -119,14 +119,14 @@ class WordpressProvider(Provider):
         content = soup.find('div', 'snap_preview')
         if not content:
             logging.error("Didn't find any snap_preview node on this page: %s" % query_url)
-            raise OohEmbedError("Could not parse the Wikipedia page")
+            raise OohEmbedError("Could not parse the Wordpress page")
 
         page = u''
         count = 1000
         para = content.first()
         if not para:
             logging.error("Didn't find any first paragraph on this page: %s" % query_url)
-            raise OohEmbedError("Could not parse the Wikipedia page")
+            raise OohEmbedError("Could not parse the Wordpress page")
 
         while len(page) <= count:
             page += unicode(para)
