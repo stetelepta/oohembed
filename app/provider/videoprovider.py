@@ -66,7 +66,7 @@ class MetacafeProvider(Provider):
     """Provides the flash video embed code"""
     title = 'Metacafe'
     url = 'http://*.metacafe.com/watch/*'
-    url_re = r'metacafe\.com/watch/(?P<videoid>\d+)/.+'
+    url_re = r'metacafe\.com/watch/(?P<videoid>[-\w]+)/.+'
     example_url = 'http://www.metacafe.com/watch/1350976/funny_call/'
 
     def provide(self, query_url, extra_params=None):
