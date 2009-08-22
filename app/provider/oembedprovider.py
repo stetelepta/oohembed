@@ -94,7 +94,7 @@ class DailymotionProvider(Provider, Proxy):
 
     service_url = 'http://www.dailymotion.com/api/oembed/?'
 
-class DailymotionProvider(Provider, Proxy):
+class BlipTVProvider(Provider, Proxy):
     """Just a proxy for the original oEmbed compliant service"""
     title = 'blip.tv'
     url = 'http://*.blip.tv/*'
@@ -102,4 +102,13 @@ class DailymotionProvider(Provider, Proxy):
     example_url = 'http://pycon.blip.tv/file/2058801/'
 
     service_url = 'http://blip.tv/oembed/?'
+
+class ScribdProvider(Provider, Proxy):
+    """Just a proxy for the original oEmbed compliant service"""
+    title = 'Scribd'
+    url = 'http://*.scribd.com/*'
+    url_re = r'scribd\.com/.*'
+    example_url = 'http://www.scribd.com/doc/17896323/Indian-Automobile-industryPEST'
+
+    service_url = 'http://www.scribd.com/services/oembed?'
 
