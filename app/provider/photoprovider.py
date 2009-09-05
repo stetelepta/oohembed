@@ -4,6 +4,7 @@ import urllib
 import xml.etree.cElementTree as ET
 
 from django.utils import simplejson as json
+from BeautifulSoup import BeautifulSoup, NavigableString
 
 from base import Provider
 from utils import *
@@ -221,6 +222,32 @@ class YfrogProvider(Provider):
         response = {'type': u'photo', 'version': u'1.0', 'provider_name': self.title,
                     'thumbnail_url': thumb_url, 'thumbnail_width': 150, 'thumbnail_height': 150,
                     'url': photo_url}
+
+        json_response = json.dumps(response, ensure_ascii=False, indent=1)
+        return json_response
+
+class XKCDProvider(Provider):
+    """Provides the comic image link for an xkcd.com comic page"""
+
+    title = 'XKCD Comic'
+    url = r'http://*.xkcd.com/*/'
+    url_re = r'xkcd\.com/\d+/?$'
+    example_url = 'http://xkcd.com/310/'
+
+    def provide(self, query_url, extra_params=None):
+        matches = self.url_regex.search(query_url)
+        if not matches:
+            raise UnsupportedUrlError()
+
+        result = get_url(query_url)
+
+        soup = BeautifulSoup(result)
+
+        photo = soup.find('div', id='contentContainer').find('img')
+
+        response = {'type': u'photo', 'version': u'1.0', 'provider_name': self.title,
+                'url': photo['src'], 'title': photo['alt'], 'author_name': 'Randall Munroe',
+                'author_url': 'http://xkcd.com/'}
 
         json_response = json.dumps(response, ensure_ascii=False, indent=1)
         return json_response

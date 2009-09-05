@@ -56,7 +56,7 @@ class EndPoint(webapp.RequestHandler):
 
     def get(self):
 
-        query_url = urllib.unquote(self.request.get('url').encode('utf-8'))
+        query_url = urllib.unquote(self.request.get('url').encode('utf-8')).strip()
         resp_format = self.request.get('format', default_value='json')
 
         if 'Development' in os.environ['SERVER_SOFTWARE']:
