@@ -177,7 +177,7 @@ class LJAvatarProvider(Provider):
     """Avatar image for LiveJournal user. Uses http://ljpic.seacrow.com/"""
     title = 'LiveJournal UserPic'
     url = r'http://*.livejournal.com/'
-    url_re = r'(?P<id>\w+).livejournal.com'
+    url_re = r'(?P<id>\w+).livejournal.com/?$'
     example_url = 'http://jace.livejournal.com'
 
     def provide(self, query_url, extra_params=None):
