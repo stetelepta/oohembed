@@ -1,5 +1,5 @@
 application: oohembed
-version: chocochip
+version: beta
 runtime: python
 api_version: 1
 
