@@ -1,5 +1,5 @@
 application: oohembed
-version: beta
+version: vanilla
 runtime: python
 api_version: 1
 
