@@ -8,8 +8,11 @@ import feedparser
 from base import Provider
 from utils import *
 
-class YoutubeProvider(Provider):
-    """Provides the flash video embed code"""
+class YoutubeProvider(object):
+    """Provides the flash video embed code
+    __NOTE:__ This is deprecated now. Youtube is handled via the upstream
+    oembed provider. See oembedprovider.py """
+
     title = 'Youtube'
     url = 'http://*.youtube.com/watch*'
     url_re = r'youtube\.com/watch.+v=(?P<videoid>[\w-]+)&?' 

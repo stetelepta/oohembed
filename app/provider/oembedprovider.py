@@ -122,3 +122,12 @@ class MovieClipsProvider(Provider, Proxy):
     service_url = 'http://movieclips.com/services/oembed/?'
 
 
+class YoutubeProvider(Provider, Proxy):
+    """Just a proxy for the original oEmbed compliant service"""
+    title = 'YouTube'
+    url = 'http://*.youtube.com/watch*'
+    url_re = r'youtube\.com/watch.+v=(?P<videoid>[\w-]+)&?' 
+    example_url = 'http://www.youtube.com/watch?v=vk1HvP7NO5w'
+
+    service_url = 'http://www.youtube.com/oembed?'
+
