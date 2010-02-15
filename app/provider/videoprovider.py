@@ -7,6 +7,7 @@ import feedparser
 
 from base import Provider
 from utils import *
+from secrets import *
 
 class YoutubeProvider(object):
     """Provides the flash video embed code
@@ -268,8 +269,8 @@ class SlideShareProvider(Provider):
     example_url = 'http://www.slideshare.net/igniteportland/' \
             'how-to-run-a-startup-without-losing-your-mind'
 
-    _api_key = 'jQIEOY0W'
-    _api_secret = 'YDJFeM3S' # Please don't abuse!
+    _api_key = SLIDESHARE_KEY
+    _api_secret = SLIDESHARE_SECRET
     _api_url = 'http://www.slideshare.net/api/2/get_slideshow?'
 
     def fetch_info(self, query_url):

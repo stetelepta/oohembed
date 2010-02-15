@@ -2,12 +2,17 @@ import logging
 import re
 import urllib
 import xml.etree.cElementTree as ET
+import base64
+import hashlib
+import hmac
+import time
 
 from django.utils import simplejson as json
 from BeautifulSoup import BeautifulSoup, NavigableString
 
 from base import Provider
 from utils import *
+from secrets import *
 
 class ImdbProvider(object):
     """Photo and some metadata for IMDb movie urls. Check sample response to see what metadata beyond that
@@ -81,14 +86,26 @@ class AmazonProvider(Provider):
             raise UnsupportedUrlError()
 
         params = {'Service': 'AWSECommerceService',
-                'SubscriptionId': '1FTX8DJ3D0NCX9DRWQR2', # Please don't abuse!
+                'AWSAccessKeyId': AWS_ACCESS_KEY_ID, # Please don't abuse!
                 'AssociateTag': 'antrixnet-20',
                 'Operation': 'ItemLookup',
                 'ResponseGroup': 'Images,ItemAttributes',
                 'Style': 'http://oohembed.com/static/amazon_json.xsl',
                 'ContentType': 'text/javascript',
                 'IdType': 'ASIN',
+                'Timestamp': "2010-02-15T12:00:00Z", # time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime()), #ISO 8601
                 'ItemId': matches.group('asin')}
+
+        str_to_sign = "GET" + "\n" + "xml-us.amznxslt.com" + "\n" + "/onca/xml" + "\n"
+        str_to_sign = str_to_sign + urllib.urlencode(sorted(params.items())) # All query params sorted
+
+        signature = hmac.new(key=AWS_SECRET_ACCESS_KEY, msg=str_to_sign,
+                                digestmod=hashlib.sha256).digest()
+         
+        signature = base64.encodestring(signature).strip("\n") # base64.urlsafe_b64encode(signature)
+        
+        params['Signature'] = signature # Add the Signature to the query params
+
         fetch_url = 'http://xml-us.amznxslt.com/onca/xml?' + urllib.urlencode(params)
 
         result = get_url(fetch_url)
