@@ -93,7 +93,7 @@ class AmazonProvider(Provider):
                 'Style': 'http://oohembed.com/static/amazon_json.xsl',
                 'ContentType': 'text/javascript',
                 'IdType': 'ASIN',
-                'Timestamp': "2010-02-15T12:00:00Z", # time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime()), #ISO 8601
+                'Timestamp': time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime()), #ISO 8601
                 'ItemId': matches.group('asin')}
 
         str_to_sign = "GET" + "\n" + "xml-us.amznxslt.com" + "\n" + "/onca/xml" + "\n"
