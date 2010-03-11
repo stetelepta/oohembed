@@ -43,8 +43,6 @@
                 text-indent: -0.5em;
             }
         </style>
-
-            
     </head>
 
     <body>
@@ -91,12 +89,12 @@ There, that should make everything clear. Still no? Then perhaps you should go a
 ## Q & A
 
 1.  How is this useful?   
-    I built oohEmbed to further development of [Dumble](/dumble/?u=antrix&t=dumbletest), my del.icio.us tumblelog. 
+    I built oohEmbed to further development of [Dumble](/dumble/?u=antrix&t=dumbletest), my delicious.com tumblelog. 
     But I imagine oohEmbed could be useful in several other places. For example, someone could build a 
-    wordpress plugin backed by the oohEmbed web service that makes embedding content into blog posts 
+    blog engine plugin backed by the oohEmbed web service that makes embedding content into blog posts 
     easier. (If you do build such a plugin, let me know!)
 
-    _New:_ Scroll down to see a list of [consumer sites and apps](#consumers) that use oohEmbed.
+    Scroll down to see a list of [consumer sites and apps](#consumers) that use oohEmbed.
 
 2.  So what sites can oohEmbed provide information for?   
     Quite a few to start with - scroll down to see [the list](#configuration). I'll be adding more sites as I find time!
@@ -108,19 +106,19 @@ There, that should make everything clear. Still no? Then perhaps you should go a
     *  You can specify a JSON callback.
 
 4.  JSON Callback?    
-    To overcome the [same origin policy](http://en.wikipedia.org/wiki/Same_origin_policy) of web browsers, you can specify a 'callback' parameter as part of your request.
-    e.g., if you specify 'callback=myCallback' as part of the request, then the JSON response object will be wrapped as a parameter to the myCallback function.
+    To overcome the [same origin policy](http://en.wikipedia.org/wiki/Same_origin_policy) of web browsers, you can specify a `callback` parameter as part of your request.
+    e.g., if you specify `callback=myCallback` as part of the request, then the JSON response object will be wrapped as a parameter to the `myCallback` function.
 
 5.  Will this callback expose my site to cross-site attacks?    
     Possibly. Although you have to trust that I won't be doing anything funny or malicious intentionally, oohEmbed itself is just a proxy to the target website.
     So if the target website sends back something bad, all bets are off! 
 
 6.  So I can't sue you if anything goes wrong?    
-    No! By using this service, you agree that I will not be held liable for anything that goes wrong. I do appreciate bug reports though.
+    No! By using this service, you agree that I will not be held liable for anything that goes wrong. I do appreciate [bug reports](http://code.google.com/p/oohembed/issues/list) though.
 
 7.  Is it free to use?    
     Yes. At the moment, all this service costs me is $10/year for the domain name and several hours of my free time.
-    Google App Engine kindly hosts the app for free (thanks!) so that's taken care of. 
+    Google App Engine kindly hosts the app for free (thanks!) so that's taken care of.
 
 8.  But is it _really free_?    
     Oh yes, it is _really free_ too! You can get access to the code that powers oohEmbed.com from the [oohEmbed project on Google Code](http://oohembed.googlecode.com).
@@ -130,7 +128,7 @@ There, that should make everything clear. Still no? Then perhaps you should go a
     Yes, but to a limit. If I detect abuse, I reserve the right to throttle your use or worse, ban you from accessing the service.
 
 9.  Great, how do I sign-up?!    
-    Umm.. there is no sign-up. Here's your service, run with it: http://oohembed.com/oohembed/?url=
+    Umm.. there is no sign-up. Here's your service, run with it: `http://oohembed.com/oohembed/?url=`
 
 10. I'm all fired up. Where's the oEmbed provider configuration for the oohEmbed service to get me going?    
     Just scroll down this page for the [API endpoint and supported URL schemes](#configuration).
@@ -145,9 +143,7 @@ There, that should make everything clear. Still no? Then perhaps you should go a
     Fair enough. Drop me an <a href="mailto:deepak@antrix.deletethis.net">email</a> and I'll stop supporting your site.
 
 13. How do I report bugs? Do you take feature requests?    
-    Sure. For now, just use the [comment form](#comments) at the end of this page. If this thing gets popular, I'll switch to more traditional
-    channels of bug tracking.    
-    _Update:_ Now that the oohEmbed open source project is live, you can use the [issue tracker](http://code.google.com/p/oohembed/issues/) on Google Code!
+    Sure. Please report bugs & enhancement requests using the [issue tracker](http://code.google.com/p/oohembed/issues/) on Google Code.
 
 14. Anything else?    
     Nothing, except that oohEmbed wouldn't be possible without the folks behind the oEmbed.com spec so kudos to them.
@@ -185,6 +181,9 @@ These consumers currently use the oohEmbed service.
 * [Indy.com](http://www.indy.com/), a local entertainment site by The Indianapolis Star.
 * [Ars Technica](http://arstechnica.com/), a technology news and analysis site.
 * [DropAVideo](http://dropavideo.com/), a Brazilian video micro-blogging service.
+* [Zenbe Shareflow](http://www.zenbe.com/shareflow), a team collaboration service.
+* [Hostelz.com](http://www.hostelz.com/), a hostel review site.
+* [StatusNet](http://status.net/), a popular open-source microblogging platform.
 
 Moreover, oohEmbed support is already baked into these libraries: 
 
@@ -197,7 +196,6 @@ Moreover, oohEmbed support is already baked into these libraries:
 If you are using oohEmbed, please leave a comment below and I'll add you to this list!
 
 ## Changes
-
 
 * _25th February, 2010:_ Fix Amazon support. Switch Youtube to upstream oembed endpoint.
 * _2nd September, 2009:_ New yfrog.com support. New xkcd support.
