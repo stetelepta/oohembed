@@ -112,7 +112,8 @@ class ScribdProvider(Provider, Proxy):
 
     service_url = 'http://www.scribd.com/services/oembed?'
 
-class MovieClipsProvider(Provider, Proxy):
+class MovieClipsProvider(object):
+    #class MovieClipsProvider(Provider, Proxy):
     """Just a proxy for the original oEmbed compliant service"""
     title = 'Movieclips'
     url = 'http://movieclips.com/watch/*/*/'
