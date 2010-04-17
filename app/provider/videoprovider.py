@@ -1,6 +1,7 @@
 import logging
 import re
 import urllib
+import xml.etree.cElementTree as ET
 
 from django.utils import simplejson as json
 import feedparser
@@ -297,6 +298,15 @@ class SlideShareProvider(Provider):
         
         if not result:
             raise OohEmbedError("Did not get response from SlideShare")
+
+        if "SlideShareServiceError" in result:
+            error_msg = ET.fromstring(result) 
+            error_msg = error_msg.find("Message")
+            if error_msg is not None:
+                raise OohEmbedError("SlideShare returned error: %s" % error_msg.text)
+            else:
+                logging.error("SlideShare error response: %s" % result)
+                raise OohEmbedError("SlideShare returned error: %s" % result)
 
         result = xml2dict(result) 
 

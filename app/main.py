@@ -56,8 +56,11 @@ class EndPoint(webapp.RequestHandler):
 
     def get(self):
 
-        query_url = urllib.unquote(self.request.get('url').encode('utf-8')).strip()
+        query_url = urllib.unquote(self.request.get('url').encode('utf-8')).strip().rstrip("#")
+
         resp_format = self.request.get('format', default_value='json')
+
+        logging.debug('Incoming request for %s' % query_url)
 
         if 'Development' in os.environ['SERVER_SOFTWARE']:
             self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
