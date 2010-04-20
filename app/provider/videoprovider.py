@@ -334,7 +334,7 @@ class SlideShareProvider(Provider):
         result = xml2dict(result) 
 
         response = {'version' : '1.0',
-                    'type': 'video',
+                    'type': 'rich',
                     'provider_name': self.title
                     }
 
