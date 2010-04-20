@@ -273,9 +273,9 @@ class dotSUBVideoProvider(Provider):
     "version": "1.0",
     "type": "video",
     "provider_name": "dotsub.com Video",
-    "width": 640,
-    "height": 509,
-    "html": "<embed style='width:640; height:509;' width='640' height='509' type='application/x-shockwave-flash' src='http://dotsub.com/static/players/portalplayer.swf?plugins=dotsub&uuid=%s&type=video&lang=eng' allowFullscreen='true'></embed>"
+    "width": 420,
+    "height": 347,
+    "html": "<iframe src="http://dotsub.com/media/%s/e/m" frameborder="0" width="420" height="347"></iframe>"
     }"""
 
     def provide(self, query_url, extra_params=None):
