@@ -144,6 +144,23 @@ class EndPoint(webapp.RequestHandler):
         else:
             self.response.out.write(resp)
 
+class AdminEndPoint(webapp.RequestHandler):
+    def get(self):
+        if self.request.get('flushcache'):
+            result = memcache.flush_all()
+            response = 'memcache flush ' + (result and 'succeeded' or 'failed')
+            return self.response.out.write(response)
+        elif self.request.get('infocache'):
+            result = memcache.get_stats()
+            if result:
+                body = '<br/>'.join(('<b>%s</b>: %s\n' % t for t in result.iteritems()))
+            else:
+                body = 'failed to retrieve memcache stats'
+            response = '<html><title>Memcache Stats</title><body>' + body 
+            return self.response.out.write(response)
+        else:
+            return self.response.out.write('What function did you want? "infocache" or "flushcache"?')
+
 class MainPage(webapp.RequestHandler):
     providers = Provider.get_providers()
 
@@ -168,7 +185,9 @@ class MainPage(webapp.RequestHandler):
                         production=production, hostname=hostname))
 
 urls = [('/', MainPage),
-        ('/oohembed\/?', EndPoint)]
+        ('/oohembed\/?', EndPoint),
+        ('/admin/', AdminEndPoint)
+        ]
 
 def main():
     if 'Development' in os.environ['SERVER_SOFTWARE']:
