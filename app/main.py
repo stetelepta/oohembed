@@ -150,7 +150,7 @@ class EndPoint(webapp.RequestHandler):
                 self.error(304)
                 return
             else:
-                self.response.headers['Last-Modified'] = last_modified
+                self.response.headers['Last-Modified'] = last_modified.encode('utf-8')
 
         if callback:
             self.response.headers['Content-Type'] = 'text/javascript'
