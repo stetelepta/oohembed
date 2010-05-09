@@ -38,6 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 import wsgiref.handlers
+import datetime
 import logging
 import os
 import urllib
@@ -50,6 +51,10 @@ from google.appengine.api import memcache
 from jinja import Environment, FileSystemLoader
 
 from provider import *
+
+HTTP_DATE_FMT = "%a, %d %b %Y %H:%M:%S GMT"
+CACHE_SEP = "=+=+="
+CACHE_TIME = 2*24*60*60
 
 class EndPoint(webapp.RequestHandler):
     providers = Provider.get_providers()
@@ -88,10 +93,11 @@ class EndPoint(webapp.RequestHandler):
             extra_params['maxheight'] = self.request.get('maxheight').encode('utf-8')
 
         # Check memcache
-        resp = memcache.get(make_key(query_url, extra_params))
-        if resp:
+        cached_item = memcache.get(make_key(query_url, extra_params))
+        if cached_item:
             logging.debug('Cache hit for url %s' % query_url)
-            self.send_response(resp, callback)
+            resp, timestamp = cached_item.split(CACHE_SEP)
+            self.send_response(resp, last_modified=timestamp, callback=callback)
             return
 
         resp = None
@@ -100,12 +106,13 @@ class EndPoint(webapp.RequestHandler):
                 resp = p.provide(query_url, extra_params)
                 if resp:
                     # Save to memcache first
-                    if not memcache.set(make_key(query_url, extra_params), resp, time=86400):
+                    timestamp = datetime.datetime.now().strftime(HTTP_DATE_FMT)
+                    if not memcache.set(make_key(query_url, extra_params), resp + CACHE_SEP + timestamp, time=CACHE_TIME):
                         logging.error('Failed saving cache for url %s' % query_url)
                     else:
                         logging.debug('Saved url response to cache for url %s' % query_url)
 
-                    self.send_response(resp, callback)
+                    self.send_response(resp, last_modified=timestamp, callback=callback)
                     return
             except UnsupportedUrlError, e:
                 pass
@@ -132,17 +139,24 @@ class EndPoint(webapp.RequestHandler):
                 'representation for queried URL')
         return
 
-    def send_response(self, resp, callback=None):
+    def send_response(self, resp, last_modified=None, callback=None):
 
         if 'Development' not in os.environ['SERVER_SOFTWARE']:
-            self.response.headers['Expires'] = email.utils.formatdate(time.time() + 24*60*60, usegmt=True)
-            self.response.headers['Cache-Control'] = 'max-age=%d' % int(3600*24)
+            self.response.headers['Expires'] = email.utils.formatdate(time.time() + CACHE_TIME, usegmt=True)
+            self.response.headers['Cache-Control'] = 'max-age=%d' % int(CACHE_TIME)
+
+        if last_modified:
+            if last_modified == self.request.headers.get('If-Modified-Since', '-1'):
+                self.error(304)
+                return
+            else:
+                self.response.headers['Last-Modified'] = last_modified
 
         if callback:
             self.response.headers['Content-Type'] = 'text/javascript'
-            self.response.out.write('%s(%s);' % (callback, resp))
-        else:
-            self.response.out.write(resp)
+            resp = '%s(%s);' % (callback, resp)
+
+        self.response.out.write(resp)
 
 class AdminEndPoint(webapp.RequestHandler):
     def get(self):
