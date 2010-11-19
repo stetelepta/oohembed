@@ -262,29 +262,6 @@ class YfrogVideoProvider(Provider):
         shardid = decode_shardid(matches.group('shardid'))
         return self.json_template % {'shardid':shardid, 'videoid':matches.group('videoid')}
 
-class dotSUBVideoProvider(Provider):
-    """Provides the flash video embed code"""
-    title = 'dotSUB.com'
-    url = 'http://dotsub.com/view/*'
-    url_re = r'dotsub\.com/view/(?P<videoid>[-\da-zA-Z]+)$'
-    example_url = 'http://dotsub.com/view/10e3cb5e-96c7-4cfb-bcea-8ab11e04e090'
-
-    json_template = u"""{
-    "version": "1.0",
-    "type": "video",
-    "provider_name": "dotsub.com Video",
-    "width": 420,
-    "height": 347,
-    "html": "<iframe src="http://dotsub.com/media/%s/e/m" frameborder="0" width="420" height="347"></iframe>"
-    }"""
-
-    def provide(self, query_url, extra_params=None):
-        matches = self.url_regex.search(query_url)
-        if not matches:
-            raise UnsupportedUrlError()
-
-        return self.json_template % matches.group('videoid')
-
 class SlideShareProvider(Provider):
     """Provides the embed code for slideshow"""
     title = 'SlideShare'

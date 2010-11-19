@@ -25,6 +25,7 @@ handlers:
 - url: /endpoints.json
   static_files: static/endpoints.json
   upload: static/endpoints.json
+  mime_type: application/json
 
 - url: /dumble
   static_dir: dumble

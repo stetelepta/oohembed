@@ -78,9 +78,16 @@
 }, 
 {
 "url": "http://*.youtube.com/watch*", 
-"url_re": "youtube\\.com/watch.+v=(?P<videoid>[\\w-]+)&?", 
+"url_re": "youtube\\.com/watch.+v=(?P<id>[\\w-]+)&?", 
 "example_url": "http://www.youtube.com/watch?v=vk1HvP7NO5w", 
 "endpoint_url": "http://www.youtube.com/oembed", 
 "title": "YouTube"
+},
+{
+"url": "http://dotsub.com/view/*", 
+"url_re": "dotsub\\.com/view/(?P<id>[-\\da-zA-Z]+)$",
+"example_url": "http://dotsub.com/view/10e3cb5e-96c7-4cfb-bcea-8ab11e04e090", 
+"endpoint_url": "http://dotsub.com/services/oembed", 
+"title": "dotSUB.com"
 }
 ]
