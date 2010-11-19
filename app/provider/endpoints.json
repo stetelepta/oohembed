@@ -28,13 +28,6 @@
 "title": "Hulu"
 }, 
 {
-"url": "http://movieclips.com/watch/*/*/", 
-"url_re": "moviesclips\\.com/watch/.*", 
-"example_url": "http://movieclips.com/1/2/", 
-"endpoint_url": "http://movieclips.com/services/oembed/", 
-"title": "Movieclips"
-}, 
-{
 "url": "http://*.nfb.ca/film/*", 
 "url_re": "nfb\\.ca/film/(?P<id>[-\\w]+)/?", 
 "example_url": "http://www.nfb.ca/film/blackfly/", 
