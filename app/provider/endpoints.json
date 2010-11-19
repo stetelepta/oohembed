@@ -96,5 +96,26 @@
 "example_url": "http://yfrog.com/0wgvcpj", 
 "endpoint_url": "http://www.yfrog.com/api/oembed", 
 "title": "YFrog"
+},
+{
+"url": "http://*.clikthrough.com/theater/video/*", 
+"url_re": "clikthrough\\.com/theater/video/\\d+$",
+"example_url": "http://www.clikthrough.com/theater/video/55", 
+"endpoint_url": "http://clikthrough.com/services/oembed", 
+"title": "Clikthrough"
+},
+{
+"url": "http://*.kinomap.com/*", 
+"url_re": "kinomap\\.com/.+",
+"example_url": "http://www.kinomap.com/kms-vzkpc7", 
+"endpoint_url": "http://www.kinomap.com/oembed", 
+"title": "Kinomap"
+},
+{
+"url": "http://*.photobucket.com/albums/*|http://*.photobucket.com/groups/*", 
+"url_re": "photobucket\\.com/(albums|groups)/.+$",
+"example_url": "http://img.photobucket.com/albums/v211/JAV123/Michael%20Holland%20Candle%20Burning/_MG_5661.jpg", 
+"endpoint_url": "http://photobucket.com/oembed", 
+"title": "Photobucket"
 }
 ]
