@@ -218,31 +218,6 @@ class LJAvatarProvider(Provider):
         json_response = json.dumps(response, ensure_ascii=False, indent=1)
         return json_response
 
-class YfrogProvider(Provider):
-    """Photo and thumbnail for yfrog.com photos.
-    
-    Uses API described here - http://code.google.com/p/imageshackapi/wiki/YFROGurls"""
-    title = 'Yfrog photo'
-    url = r'http://yfrog.(com|ru|com.tr|it|fr|co.il|co.uk|com.pl|pl|eu|us)/*'
-    url_re = r'^http://yfrog.(com|ru|com.tr|it|fr|co.il|co.uk|com.pl|pl|eu|us)/[a-zA-Z0-9]+(j|p|b|t|g)$'
-    example_url = 'http://yfrog.com/0wgvcpj'
-    
-    def provide(self, query_url, extra_params=None):
-        matches = self.url_regex.search(query_url.strip())
-        if not matches:
-            raise UnsupportedUrlError()
-
-        photo_url = query_url + ':iphone' # This is a hack. There's no easy way to get/guess the actual photo_url.
-        thumb_url = query_url + '.th.jpg'
-
-        # thumbnail_width and thumbnail_height are approximate sizes only.
-        response = {'type': u'photo', 'version': u'1.0', 'provider_name': self.title,
-                    'thumbnail_url': thumb_url, 'thumbnail_width': 150, 'thumbnail_height': 150,
-                    'url': photo_url}
-
-        json_response = json.dumps(response, ensure_ascii=False, indent=1)
-        return json_response
-
 class XKCDProvider(Provider):
     """Provides the comic image link for an xkcd.com comic page"""
 

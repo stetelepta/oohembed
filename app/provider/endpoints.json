@@ -89,5 +89,12 @@
 "example_url": "http://dotsub.com/view/10e3cb5e-96c7-4cfb-bcea-8ab11e04e090", 
 "endpoint_url": "http://dotsub.com/services/oembed", 
 "title": "dotSUB.com"
+},
+{
+"url": "http://yfrog.(com|ru|com.tr|it|fr|co.il|co.uk|com.pl|pl|eu|us)/*", 
+"url_re": "yfrog\\.(com|ru|com\\.tr|it|fr|co\\.il|co\\.uk|com\\.pl|pl|eu|us)/[a-zA-Z0-9]+$",
+"example_url": "http://yfrog.com/0wgvcpj", 
+"endpoint_url": "http://www.yfrog.com/api/oembed", 
+"title": "YFrog"
 }
 ]

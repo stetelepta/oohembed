@@ -224,44 +224,6 @@ class DailyShowVideoProvider(Provider):
 
         return self.json_template % matches.group('videoid')
 
-class YfrogVideoProvider(Provider):
-    """Provides the Yfrog video embed code."""
-    title = 'Yfrog video'
-    url = r'http://yfrog.(com|ru|com.tr|it|fr|co.il|co.uk|com.pl|pl|eu|us)/*'
-    url_re = r'^http://yfrog.(com|ru|com.tr|it|fr|co.il|co.uk|com.pl|pl|eu|us)/(?P<shardid>[0-9a-z]{2})(?P<videoid>[0-9a-zA-Z]+)(z|f)$'
-    example_url = 'http://yfrog.us/0bdrwz'
-    
-    json_template = u"""{
-    "version": "1.0",
-    "type": "video",
-    "provider_name": "Yfrog",
-    "width": 480,
-    "height": 380,
-    "html": "<embed src='http://img%(shardid)s.imageshack.us/flvplayer.swf?f=P%(videoid)s&amp;autostart=true&amp;noclick=1' width='480' height='380' allowFullScreen='true' type='application/x-shockwave-flash'></embed>"
-    }"""
-    
-    def provide(self, query_url, extra_params=None):
-        def decode_shardid(shardid):
-            """Decode shardid which is encoded in base-36 [0-9,a-z]"""
-            def decode_char(ch):
-                try:
-                    i = int(ch)
-                    return ord(ch)-48
-                except ValueError:
-                    return ord(ch)-87
-
-            cnt = 0
-            for i,ch in enumerate(shardid[::-1]):
-                cnt += decode_char(ch) * (36**i)
-            return cnt
-
-        matches = self.url_regex.search(query_url.strip())
-        if not matches:
-            raise UnsupportedUrlError()
-        
-        shardid = decode_shardid(matches.group('shardid'))
-        return self.json_template % {'shardid':shardid, 'videoid':matches.group('videoid')}
-
 class SlideShareProvider(Provider):
     """Provides the embed code for slideshow"""
     title = 'SlideShare'
