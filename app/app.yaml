@@ -1,5 +1,5 @@
 application: oohembed
-version: chocochip
+version: vanilla
 runtime: python
 api_version: 1
 
@@ -21,6 +21,10 @@ handlers:
 - url: /crossdomain.xml
   static_files: static/crossdomain.xml
   upload: static/crossdomain.xml
+
+- url: /endpoints.json
+  static_files: static/endpoints.json
+  upload: static/endpoints.json
 
 - url: /dumble
   static_dir: dumble

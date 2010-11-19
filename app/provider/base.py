@@ -14,7 +14,7 @@ class ProviderMount(type):
     def get_providers(self, *args, **kwargs):
         return [p(*args, **kwargs) for p in self.plugins]
 
-class Provider:
+class Provider(object):
     """
     Mount point for plugins which refer to actions that can be performed.
     Plugins implementing this reference should provide the following attributes:
